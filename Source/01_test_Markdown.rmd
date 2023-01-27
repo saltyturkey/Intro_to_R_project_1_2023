@@ -2,7 +2,7 @@
 title: "class1_datatypes"
 author: "sally_turley"
 date: "2023-01-20"
-output: html_document
+output: git_document
 ---
 
 ```{r setup, include=FALSE}
@@ -27,4 +27,6 @@ You can also embed plots, for example:
 plot(pressure)
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+This is my new code
+
+
