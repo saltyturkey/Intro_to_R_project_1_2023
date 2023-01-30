@@ -1,0 +1,36 @@
+---
+title: "TurleyIntroduction"
+author: "sally_turley"
+date: "2023-01-29"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## A **little** about me
+
+![Penguin!](images/RX409059.jpg)
+
+I started off college at Reed (just down in SE) as a Bio Chemistry major, spent a while as an Anthropology major, earned an associate's decree at PCC in Accounting and now am getting my bachelors in business in Operations and Technology Management, with a minor in Economics.Its been quite a lot of reading, but then again, there's always more to learn.
+
+You wanted a URL and i thought that this might be a little interesting. It's a site that focuses on language in every arena, and recently they have been posting some [*spicy*](*%5BLanguage%20Log%20»%20GLM-130B:%20An%20Open%20Bilingual%20Pre-Trained%20Model%20(upenn.edu)%20(%3Chttps://languagelog.ldc.upenn.edu/nll/?p=57750%3E)) [**content**](%5BLanguage%20Log%20»%20Alexa%20down,%20ChatGPT%20up?%20(upenn.edu)%5D(https://languagelog.ldc.upenn.edu/nll/?p=57275)).
+
+In other news I have just dropped Inventory Management with Dr. Yu. Not the best feeling in the world to drop something one is interested in, but it is exciting to think about what will fill its space. At last, I am certain my focus will be firmly on the technology side of the OM/T spectrum that exists.
+
+```{r }
+summary(faithful,echo=FALSE)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r faithful, eval=FALSE, include=FALSE}
+```
+
+```{r faithful}
+plot(faithful$eruptions, xlab = "Eruption Sample, n",
+     ylab="OF Eruption Times (min)", main= "Old Faithful Eruption Durations")
+```
