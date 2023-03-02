@@ -1,0 +1,49 @@
+---
+title: "Turley_Project/HW_02"
+author: "sally_turley"
+date: "2023-03-02"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+View(Project02_SuperStoreOrders)
+
+superstore <- Project02_SuperStoreOrders
+
+```
+
+
+## Create a Summary Statistic
+
+```{r super store orders}
+summary(superstore)
+```
+# The data show that the data is clean and does not have an abundance of 
+  values which need to be removed. In fact, there are none that I can identify. 
+  All of the data has the same length so we are able to manipulate it easily. 
+  
+  The data ranges from 2011 to 2014 and examines the sales, quantity purchased, 
+  discounts recieved, profits earned, shipping costs and the urgency (priority)
+  assisgned to the order. 
+  
+  The data is structured around the order_ID. A new order ID is created for each
+  purchase so a single customer can have many order IDs. 
+  
+  The dates are not in date format and will need to be lubridated. 
+  
+  
+  
+  
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
