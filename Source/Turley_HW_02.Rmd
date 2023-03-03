@@ -9,41 +9,194 @@ output: github_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-```{r}
-View(Project02_SuperStoreOrders)
+```{r load files and packages, include=FALSE}
 
-superstore <- Project02_SuperStoreOrders
-
+library(RColorBrewer)
+library(knitr)
+library(ggplot2)
+library(readr)
+library(tidyverse)
 ```
 
+```{r load files}
+data_path <- file.path(getwd(),"Project02_SuperStoreOrders.csv")
+superstore <- read.csv(data_path)
+```
 
-## Create a Summary Statistic
+```{r head, include=FALSE}
+head(superstore)
+```
+
+# Q1 Create a Summary Statistic
 
 ```{r super store orders}
 summary(superstore)
 ```
-# The data show that the data is clean and does not have an abundance of 
-  values which need to be removed. In fact, there are none that I can identify. 
-  All of the data has the same length so we are able to manipulate it easily. 
-  
-  The data ranges from 2011 to 2014 and examines the sales, quantity purchased, 
-  discounts recieved, profits earned, shipping costs and the urgency (priority)
-  assisgned to the order. 
-  
-  The data is structured around the order_ID. A new order ID is created for each
-  purchase so a single customer can have many order IDs. 
-  
-  The dates are not in date format and will need to be lubridated. 
-  
-  
-  
-  
-## Including Plots
 
-You can also embed plots, for example:
+#### Analysis
 
-```{r pressure, echo=FALSE}
-plot(pressure)
+The data show that the data is clean and does not have an abundance of NA entries that would require us to remove them from the data in order to begin our assessment. In fact, there are none that I can identify. All of the data has the same length so we are able to manipulate it easily.
+
+The data ranges from 2011 to 2014 and examines the sales, quantity purchased, discounts recieved, profits earned, shipping costs and the urgency (priority) assisgned to the order. The table provides valuable insights into the sales performance and trends, such as the sales amount, profit, and shipping cost for each order, as well as the frequency of orders over time.
+
+# Q2 Orders Over Time by Segment
+
+```{r order_df, echo=FALSE}
+order_df <- subset(superstore, select =c("order_id","order_date","year", "segment"))
+                   
+segment_orders <- ggplot(order_df, 
+  aes(x = year, fill = segment)) +
+  geom_bar() +
+  xlab("Year of Order") +
+  ylab("Count of Orders") +
+  ggtitle("Orders by Year and Segment") +
+  theme(axis.text.x = element_text(angle = 45, vjust = 0.5)) +
+  scale_fill_manual(values = c("#CCCCFF", "#1164B4","#FF7F50"))
+print(segment_orders)
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+# Q3 Which segment is the best seller?
+
+We can compare segments by calculating the proportion of sales per segment both yearly and overall. This way we might be able to see changes over time in the growth or decline of various sectors.
+
+```{r echo=FALSE}
+orders_by_segment <- aggregate(order_df$order_id, by = list(order_df$segment, order_df$year), FUN = length)
+colnames(orders_by_segment) <- c("segment", "year", "count")
+orders_by_segment <- orders_by_segment[order(orders_by_segment$year, decreasing = FALSE),]
+
+segment_curves <- ggplot(orders_by_segment, aes(x = year, y = count, color = segment)) +
+  geom_line(linewidth = 1.5) +
+  scale_color_manual(values = c("#CCCCFF", "#1164B4", "#FF7F50")) +
+  xlab("Year") +
+  ylab("Count of Orders") +
+  ggtitle("Gross Orders by Segment per Year") +
+  theme(legend.position = "right") 
+print(segment_curves)
+```
+
+# Q4 Bar Chart of Regional Orders
+
+```{r echo=FALSE}
+orders_by_region <- aggregate(
+  superstore$order_id,
+  by = list(region = superstore$region),
+  FUN = length
+)
+
+colnames(orders_by_region) <- 
+  c("Region", "Order_Count")
+
+orders_by_region <- orders_by_region[order(orders_by_region$`Order_Count`, decreasing = TRUE),]
+```
+
+```{r customcolors, echo=FALSE}
+library(RColorBrewer)
+
+n <- superstore %>% 
+  distinct(region) %>% 
+  n_distinct()
+
+palette <- colorRampPalette(brewer.pal(9, "Spectral"))(n)
+
+```
+
+```{r}
+
+```
+
+```{r regionalbarchart, echo=FALSE}
+regional_bar <- ggplot(data = orders_by_region,
+  aes(x = reorder(factor(Region), +Order_Count), y = Order_Count, fill = Region)) +
+  scale_fill_manual(values = palette) +
+  geom_bar(stat = "identity") +
+  geom_text(aes(label = `Order_Count`), vjust = -0.25) +
+  ylab("Region") +
+  xlab("Count of Orders") +
+  ggtitle("Count of Orders by Region") +
+  theme(legend.key.size = unit(.25, "cm")) +
+  coord_flip()
+print(regional_bar) 
+```
+
+#### Analysis
+
+The region that receives the most orders is the Central region, while Canada receives the least with only 384. The main issue with this information is the terms that are used to identify the regions are nonsensicle and require another legend to decipher.
+
+The regions of the united states that are represented (presumably) by the terms North, East, South, Central and West, are significantly larger in aggregate than any of the other regions. I would be interested to see where central american countries like Mexico would be placed.
+
+Overall this demonstrates that the US, and the Central region in particular (if my assumptions about the naming conventions are correct) are the largest regions by sales order count.
+
+# Q5 Using the Snippet, create the profits graph
+
+```{r snippet, echo=FALSE}
+library(dplyr)
+library(ggplot2)
+library(scales)
+
+superstore %>% 
+  mutate(total_profit = sum(profit)) %>%
+  group_by(region) %>%
+  summarize(total_profit = sum(profit)) %>%
+  
+  ggplot(aes(x = region, y = total_profit)) +
+  geom_polygon(aes(fill = region), color = "black", alpha = 0.5) +
+  scale_y_continuous(labels = scales::number_format(scale = 1)) +
+  geom_bar(stat = "identity", fill = palette, alpha = 1) +
+  scale_fill_manual(values = palette) +
+  coord_polar() +
+  theme_minimal() +
+  theme(legend.position = "none") +
+  labs(title = "Total Profit by Region", x = NULL, y = NULL)
+```
+
+This further shows that the total orders from the are related to total profit. to what extent this relationship exists is for another time.
+
+# Q6 Density Plot
+
+```{r filtered store data, echo=FALSE}
+
+subset_data <- superstore %>%
+  filter(profit >= -125 & profit <= 125)
+
+smaller_subset <- superstore %>%
+  filter(profit >= -50 & profit <= 50)
+
+
+```
+
+```{r density}
+density_data <- density(subset_data$profit)
+denser_data <- density(smaller_subset$profit)
+```
+
+```{r}
+density_df <- data.frame(x = density_data$x, y = density_data$y)
+smaller_density_df <- data.frame(x = denser_data$x, y = denser_data$y)
+
+ggplot(subset_data, aes(x = profit)) +
+  geom_density(aes(y = ..density..), fill = "#8B5F75", alpha = 0.5) +
+  scale_y_continuous(name = "Density", labels = comma) +
+  scale_x_continuous(name = "Profit", labels = comma) +
+  theme_classic() +
+  theme(panel.grid.minor = element_line(color = "gray80", linetype = "solid")) +
+  theme(panel.grid.major = element_line(color = "gray80", linetype = "solid"))
+
+
+ggplot(smaller_subset, aes(x = profit)) +
+  geom_density(aes(y = ..density..), fill = "#8B5F75", alpha = 0.5) +
+  scale_y_continuous(name = "Density", labels = comma) +
+  scale_x_continuous(name = "Profit", labels = comma) +
+  theme_classic() +
+  theme(panel.grid.minor = element_line(color = "gray80", linetype = "solid")) +
+  theme(panel.grid.major = element_line(color = "gray80", linetype = "solid"))
+```
+
+#### Analysis
+
+This graph shows only the individual order profits that are between -125 and 125. What we can see is that though the profits lie around 0 (as we would expect of a normally distributed data set) there is a strong pull towards positive profits. The kurtosis that we see with this graph however is quite large and is very close to 1. This may suggest that some inventory items might not be profitable and that the mix of items / services that are provided could be assessed.
+
+Because we are only looking at the data between -125 and 125 are amplifying our ability to see the smaller shifts around zero that might otherwise be flattened by densities with more data points included.
+
+Profits are being made by this company, but not on every order. While this is not ideal, to the extent that it is impacting the companies ability to operate effectively is not self-evident from this graph alone. The most dense areas of the graph here are hovering between 5 and 15. The skew to the right is a good sign that indicates that there are inefficiencies in product mix or employee staffing that could help bring the mean profit even higher than \$28 per order.
+
+The main reason why representing the density is helpful here (bounded) is it allows the profit to be assessed independent of the outlines that are frequently the main attraction in business setting.

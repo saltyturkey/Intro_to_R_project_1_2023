@@ -1,203 +1,186 @@
-Turley_ProjectHW_02
+Turley_Project/HW_02
 ================
 sally_turley
 2023-03-02
 
-`{r setup, include=FALSE} knitr::opts_chunk$set(echo = TRUE)`
-
-``` {r}
-readcsv()
-
-View(Project02_SuperStoreOrders)
-
-superstore <- Project02_SuperStoreOrders
+``` r
+data_path <- file.path(getwd(),"Project02_SuperStoreOrders.csv")
+superstore <- read.csv(data_path)
 ```
 
-## Create a Summary Statistic
+# Q1 Create a Summary Statistic
 
-`{r super store orders} summary(superstore)`
+``` r
+summary(superstore)
+```
 
-# The data show that the data is clean and does not have an abundance of
+    ##    order_id          order_date         ship_date          ship_mode        
+    ##  Length:51290       Length:51290       Length:51290       Length:51290      
+    ##  Class :character   Class :character   Class :character   Class :character  
+    ##  Mode  :character   Mode  :character   Mode  :character   Mode  :character  
+    ##                                                                             
+    ##                                                                             
+    ##                                                                             
+    ##  customer_name        segment             state             country         
+    ##  Length:51290       Length:51290       Length:51290       Length:51290      
+    ##  Class :character   Class :character   Class :character   Class :character  
+    ##  Mode  :character   Mode  :character   Mode  :character   Mode  :character  
+    ##                                                                             
+    ##                                                                             
+    ##                                                                             
+    ##     market             region           product_id          category        
+    ##  Length:51290       Length:51290       Length:51290       Length:51290      
+    ##  Class :character   Class :character   Class :character   Class :character  
+    ##  Mode  :character   Mode  :character   Mode  :character   Mode  :character  
+    ##                                                                             
+    ##                                                                             
+    ##                                                                             
+    ##  sub_category       product_name          sales              quantity     
+    ##  Length:51290       Length:51290       Length:51290       Min.   : 1.000  
+    ##  Class :character   Class :character   Class :character   1st Qu.: 2.000  
+    ##  Mode  :character   Mode  :character   Mode  :character   Median : 3.000  
+    ##                                                           Mean   : 3.477  
+    ##                                                           3rd Qu.: 5.000  
+    ##                                                           Max.   :14.000  
+    ##     discount          profit         shipping_cost    order_priority    
+    ##  Min.   :0.0000   Min.   :-6599.98   Min.   :  0.00   Length:51290      
+    ##  1st Qu.:0.0000   1st Qu.:    0.00   1st Qu.:  2.61   Class :character  
+    ##  Median :0.0000   Median :    9.24   Median :  7.79   Mode  :character  
+    ##  Mean   :0.1429   Mean   :   28.64   Mean   : 26.38                     
+    ##  3rd Qu.:0.2000   3rd Qu.:   36.81   3rd Qu.: 24.45                     
+    ##  Max.   :0.8500   Max.   : 8399.98   Max.   :933.57                     
+    ##       year     
+    ##  Min.   :2011  
+    ##  1st Qu.:2012  
+    ##  Median :2013  
+    ##  Mean   :2013  
+    ##  3rd Qu.:2014  
+    ##  Max.   :2014
 
-values which need to be removed. In fact, there are none that I can
-identify. All of the data has the same length so we are able to
-manipulate it easily.
+#### Analysis
+
+The data show that the data is clean and does not have an abundance of
+NA entries that would require us to remove them from the data in order
+to begin our assessment. In fact, there are none that I can identify.
+All of the data has the same length so we are able to manipulate it
+easily.
 
 The data ranges from 2011 to 2014 and examines the sales, quantity
 purchased, discounts recieved, profits earned, shipping costs and the
-urgency (priority) assisgned to the order.
+urgency (priority) assisgned to the order. The table provides valuable
+insights into the sales performance and trends, such as the sales
+amount, profit, and shipping cost for each order, as well as the
+frequency of orders over time.
 
-The data is structured around the order_ID. A new order ID is created
-for each purchase so a single customer can have many order IDs.
+# Q2 Orders Over Time by Segment
 
-The dates are not in date format and will need to be lubridated.
+![](Turley_HW_02_files/figure-gfm/order_df-1.png)<!-- -->
 
-Quantities are clearly discrete, and can be converted into integers
-instead of doubles. (though im not sure that this is necessarily
-adventageous at this time).
+# Q3 Which segment is the best seller?
 
-## Orders Over Time by Segment
+We can compare segments by calculating the proportion of sales per
+segment both yearly and overall. This way we might be able to see
+changes over time in the growth or decline of various sectors.
 
-``` {r}
+![](Turley_HW_02_files/figure-gfm/unnamed-chunk-1-1.png)<!-- -->
 
-gg_check <- "ggplot2"
+# Q4 Bar Chart of Regional Orders
 
-# checking to see if the package is installed, and installing it if not
+![](Turley_HW_02_files/figure-gfm/regionalbarchart-1.png)<!-- -->
 
-if(!requireNamespace(gg_check, quietly = TRUE)) 
-{
-install.packages(gg_check)
-}
-library(ggplot2)
+#### Analysis
 
+The region that receives the most orders is the Central region, while
+Canada receives the least with only 384. The main issue with this
+information is the terms that are used to identify the regions are
+nonsensicle and require another legend to decipher.
+
+The regions of the united states that are represented (presumably) by
+the terms North, East, South, Central and West, are significantly larger
+in aggregate than any of the other regions. I would be interested to see
+where central american countries like Mexico would be placed.
+
+Overall this demonstrates that the US, and the Central region in
+particular (if my assumptions about the naming conventions are correct)
+are the largest regions by sales order count.
+
+# Q5 Using the Snippet, create the profits graph
+
+    ## 
+    ## Attaching package: 'scales'
+
+    ## The following object is masked from 'package:purrr':
+    ## 
+    ##     discard
+
+    ## The following object is masked from 'package:readr':
+    ## 
+    ##     col_factor
+
+![](Turley_HW_02_files/figure-gfm/snippet-1.png)<!-- -->
+
+This further shows that the total orders from the are related to total
+profit. to what extent this relationship exists is for another time.
+
+# Q6 Density Plot
+
+``` r
+density_data <- density(subset_data$profit)
+denser_data <- density(smaller_subset$profit)
 ```
 
-\#Plot of Orders 2011- 2014 broken down into customer segments
+``` r
+density_df <- data.frame(x = density_data$x, y = density_data$y)
+smaller_density_df <- data.frame(x = denser_data$x, y = denser_data$y)
 
-``` {r}
-
-order_df <- subset(superstore, select =c("order_id","order_date","year", "segment")
-
-head(order_df)
-
-unique(order_df$segment)
-
-ggplot(order_df, aes(x = year, fill = segment)) +  geom_bar() +
-  xlab("Year of Order") +
-  ylab("Count of Orders") +
-  ggtitle("Orders by Year and Segment") +
-  theme(axis.text.x = element_text(angle = 45, vjust = 0.5)) +
-  scale_fill_manual(values = c("#CCCCFF", "#1164B4","#FF7F50"))
+ggplot(subset_data, aes(x = profit)) +
+  geom_density(aes(y = ..density..), fill = "#8B5F75", alpha = 0.5) +
+  scale_y_continuous(name = "Density", labels = comma) +
+  scale_x_continuous(name = "Profit", labels = comma) +
+  theme_classic() +
+  theme(panel.grid.minor = element_line(color = "gray80", linetype = "solid")) +
+  theme(panel.grid.major = element_line(color = "gray80", linetype = "solid"))
 ```
 
-## Which segment is the best seller?
+    ## Warning: The dot-dot notation (`..density..`) was deprecated in ggplot2 3.4.0.
+    ## ℹ Please use `after_stat(density)` instead.
 
-# We can compare segments by calculating the proportion of sales per segment both yearly and overall. This way we might be able to see changes over time in the growth or decline of various sectors.
+![](Turley_HW_02_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->
 
-``` {r}
-
-orders_by_segment <- aggregate(order_df$order_id, by = list(order_df$segment, order_df$year), FUN = length)
-colnames(orders_by_segment) <- c("segment", "year", "count")
-orders_by_segment <- orders_by_segment[order(orders_by_segment$year, decreasing = FALSE),]
-View(orders_by_segment)
-
-
-ggplot(orders_by_segment, aes(x = year, y = count, color = segment)) +
-  geom_line(size = 1.5) +
-  scale_color_manual(values = c("#CCCCFF", "#1164B4", "#FF7F50")) +
-  xlab("Year") +
-  ylab("Count of Orders") +
-  ggtitle("Gross Orders by Segment per Year") +
-  theme(legend.position = "right") 
-
+``` r
+ggplot(smaller_subset, aes(x = profit)) +
+  geom_density(aes(y = ..density..), fill = "#8B5F75", alpha = 0.5) +
+  scale_y_continuous(name = "Density", labels = comma) +
+  scale_x_continuous(name = "Profit", labels = comma) +
+  theme_classic() +
+  theme(panel.grid.minor = element_line(color = "gray80", linetype = "solid")) +
+  theme(panel.grid.major = element_line(color = "gray80", linetype = "solid"))
 ```
 
-# Question 4
+![](Turley_HW_02_files/figure-gfm/unnamed-chunk-4-2.png)<!-- -->
 
-## Bar chart of Regional Orders
+#### Analysis
 
-Provide your analysis of which region receives the most orders and which
-region receives the fewest. Ensure you provide the numbers to validate
-that the longer bar corresponds to the maximum number of orders. Invert
-the axis coordinates and display the bars in the reverse order of the
-number of orders by region. Replace the bars’ color with the color of
-your choosing. I used the color blue in the graph I made. Additionally,
-ensure that the axis is labeled “Region.”
+This graph shows only the individual order profits that are between -125
+and 125. What we can see is that though the profits lie around 0 (as we
+would expect of a normally distributed data set) there is a strong pull
+towards positive profits. The kurtosis that we see with this graph
+however is quite large and is very close to 1. This may suggest that
+some inventory items might not be profitable and that the mix of items /
+services that are provided could be assessed.
 
-``` {r}
+Because we are only looking at the data between -125 and 125 are
+amplifying our ability to see the smaller shifts around zero that might
+otherwise be flattened by densities with more data points included.
 
-unique(superstore$region)
+Profits are being made by this company, but not on every order. While
+this is not ideal, to the extent that it is impacting the companies
+ability to operate effectively is not self-evident from this graph
+alone. The most dense areas of the graph here are hovering between 5 and
+15. The skew to the right is a good sign that indicates that there are
+inefficiencies in product mix or employee staffing that could help bring
+the mean profit even higher than \$28 per order.
 
-orders_by_region <- aggregate(superstore$order_id,superstore$count by = list(region = superstore$region), FUN = length)
-colnames(orders_by_region) <- c("Region", "Order Count")
-View(orders_by_region)
-
-
-# aggregate orders by region
-orders_by_region <- aggregate(order_id ~ region, data = superstore, FUN = length)
-colnames(orders_by_region) <- c("Region", "Order Count")
-orders_by_region <- orders_by_region[order(orders_by_region$`Order Count`, decreasing = TRUE),]
-
-
-
-
-# custome colors
-library(RColorBrewer)
-
-n <- 13
-palette <- colorRampPalette(brewer.pal(9, "PiYG"))(n)
-
-# Plot
-
-ggplot(data = orders_by_region, aes(x = reorder(factor(Region),-"Order_Count"), y = Order_Count)) +
-  scale_fill_manual(values =  palette) +
-  geom_bar(stat = "identity") +
-  ylab("Region") +
-  xlab("Count of Orders") +
-  ggtitle("Count of Orders by Region") +
-  theme_bw() +
-  coord_flip()
-  
-print(n)
-print(palette)
-  
-  
-```
-
-``` {r}
-library(RColorBrewer)
-
-n <- 13
-palette <- colorRampPalette(brewer.pal(9, "RdPu"))(n)
-```
-
-``` {r}
-# Aggregate orders by region
-orders_by_region <- aggregate(order_id ~ region, data = superstore, FUN = length)
-colnames(orders_by_region) <- c("Region", "Order Count")
-orders_by_region <- orders_by_region[order(orders_by_region$`Order Count`, decreasing = FALSE),]
-
-# Define custom color palette
-library(RColorBrewer)
-n <- 13
-palette <- colorRampPalette(brewer.pal(9, "PiYG"))(n)
-
-# Create bar chart
-ggplot(data = orders_by_region, aes(x = reorder(factor(Region), +`Order Count`), y = `Order Count`)) +
-  geom_bar(stat = "identity", fill = palette[1:length(orders_by_region$`Order Count`)], color = "grey") +
-  geom_text(aes(label = `Order Count`), vjust = -0.5) +
-  ylab("Count of Orders") +
-  xlab("Region") +
-  ggtitle("Count of Orders by Region") +
-  theme_bw() +
-  coord_flip()
-  
-```
-
-# Question 5
-
-## Profits by Region
-
-\`\`\` {r}
-
-\#second pallet palette2 \<- colorRampPalette(brewer.pal(9,
-“YlOrRd”))(n)
-
-store_data \<- aggregate(profit \~ region, data = superstore, FUN = sum)
-colnames(store_data) \<- c(“region”, “total_profit”) store_data \<-
-store_data\[order(store_data\$total_profit, decreasing = FALSE),\]
-View(store_data)
-
-ggplot(store_data, aes(x = region, y = total_profit)) +
-geom_polygon(aes(fill = region), color = “black”, alpha = 0.5)+
-scale_y\_continuous(labels = scales::number_format(scale = 1))+
-geom_bar(stat = “identity”, fill = palette2 , alpha = 0.8) +
-scale_fill_manual(values = palette) + coord_polar() + theme_minimal() +
-theme(legend.position = “none”) + labs(title = “Total Profit by Region”,
-x = NULL, y = NULL)
-
-store_data %\>% mutate(total_profit = sum(profit)) %\>%
-
-group_by(region) %\>% summarize(total_profit = sum(profit)) %\>%
-
-…
+The main reason why representing the density is helpful here (bounded)
+is it allows the profit to be assessed independent of the outlines that
+are frequently the main attraction in business setting.
