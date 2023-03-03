@@ -1,0 +1,68 @@
+---
+title: "Turley_Midterm_01"
+author: "sally_turley"
+date: "2023-03-03"
+output: html_document
+---
+
+```{r libraries}
+
+library(RColorBrewer)
+library(knitr)
+library(ggplot2)
+library(readr)
+library(tidyverse)
+
+```
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r load data}
+data_path <- file.path(getwd(),"melbourne_housing_prices.csv")
+melbourne_hp <- read.csv(data_path)
+```
+
+# Q1 Read and create sumamry
+
+```{r summary}
+summary(melbourne_hp)
+```
+
+# Q2 Missing Data? Which Variables/vectors
+
+```{r count of NA in melbourne_hp}
+colSums(is.na(melbourne_hp))
+```
+
+```{r NA table}
+na_counts <- (colSums(is.na(melbourne_hp))) 
+positive_na_table <- (subset(na_df,na_df > 0))
+kable(na_table)
+```
+
+```{r completecases}
+n_rows_missing_all <- sum(!complete.cases(melbourne_hp[, 1:21]))
+pct_rows_missing_all <- round(n_rows_missing_all/13580 * 100, 2)
+pct_results_missing <- paste0(pct_rows_missing_all, "%")
+print(pct_results_missing)
+```
+
+# some analysis
+
+Cars is missing the least number of values at just 64; the most that are missing is 6450 ( building area). Year built is missing 5375 values.
+
+\~47% of the data is incomplete when we examine building_area, and \~39% of the data when parsed only by year built. Overwhelmingly it appears that the missing data is paired, when there is an NA in building area it is more likely that year built is also NA. As there are only 62 NA values for cars, but they do not seem to have the same linkage present. Additionally the NA from cars only represents .4% of the data which is sufficiently small to have little to no impact if they were to be removed.
+
+This means that by removing the data for Building area and Year Built could potentially be compromise the quality of the data since they are not normally distributed. If we were to remove them we could potentially eliminate meaningful data from our analysis, resulting in biased results. Additional analysis of the NA values shows that roughly 49% of the values would have to be voided if we were to remove all. Furthermore, because the total NA count is only 300 more than the "BuildingArea" count we can intuit that the "yearbuilt" and the building are indeed linked and removing them would result in some bias, although to what degree and in what direction are unknown at this time with this assessment.
+
+I will only be removing the data from the "car" NA values as they are less than 1% of the total data set, and will not impact or bias the analysis in a significant way. Additionally they do not appear cursoraly to have the same linkage with either "buildingarea" and "yearbuilt".
+
+In summary, I will remove the missing values for cars, but am leaving the NA values for building area and year built. This is because building area and year built appear to be linked and large enough to bias results if all instances of NA were to be removed row-wise from the data set. "Car" does not pose this risk as the scale is very different
+
+```{r}
+clean_melbourne <- na.omit(melbourne_hp[, c("Car")])
+```
+
+\#
